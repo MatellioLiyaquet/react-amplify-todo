@@ -5,7 +5,6 @@ type Note @model @auth(rules: [{allow: public}]) {
   image: String
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
-  User: User @hasOne
 }
 
 type Todo @model @auth(rules: [{allow: public}]) {
@@ -13,14 +12,4 @@ type Todo @model @auth(rules: [{allow: public}]) {
   name: String!
   description: String
   image: String
-  Users: [User] @manyToMany(relationName: "TodoUser")
 }
-
-type User @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  first_name: String!
-  last_name: String
-  role: String
-  todos: [Todo] @manyToMany(relationName: "TodoUser")
-}
- 
