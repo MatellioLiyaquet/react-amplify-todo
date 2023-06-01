@@ -55,6 +55,20 @@
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "usersavedynamo": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "reactamplifytodo"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "parameters": {
@@ -71,6 +85,22 @@
         {
           "category": "function",
           "resourceName": "S3Trigger694fc4b2"
+        }
+      ]
+    },
+    "AMPLIFY_function_usersavedynamo_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "usersavedynamo"
+        }
+      ]
+    },
+    "AMPLIFY_function_usersavedynamo_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "usersavedynamo"
         }
       ]
     }

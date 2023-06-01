@@ -22,6 +22,10 @@
         "S3Trigger694fc4b2": {
           "deploymentBucketName": "amplify-amplify3f48618169164-staging-104604-deployment",
           "s3Key": "amplify-builds/S3Trigger694fc4b2-70315353356e744c6743-build.zip"
+        },
+        "usersavedynamo": {
+          "deploymentBucketName": "amplify-amplify3f48618169164-staging-104604-deployment",
+          "s3Key": "amplify-builds/usersavedynamo-5358342b526f72316943-build.zip"
         }
       },
       "storage": {
