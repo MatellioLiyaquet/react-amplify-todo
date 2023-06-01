@@ -17,6 +17,7 @@ import {
   createTodo as createToDoMutation,
   deleteTodo as deleteToDoMutation,
 } from "./graphql/mutations";
+import UserCreateForm from "./ui-components/UserCreateForm";
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([]);
@@ -127,6 +128,7 @@ const App = ({ signOut }) => {
         ))}
       </View>
       <Button onClick={signOut}>Sign Out</Button>
+      {/* <UserCreateForm key={'123'} /> */}
     </View>
   );
 };

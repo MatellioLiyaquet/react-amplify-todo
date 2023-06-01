@@ -8,13 +8,13 @@
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
-import { Todo } from "../models";
+import { User } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
-export default function TodoUpdateForm(props) {
+export default function UserUpdateForm(props) {
   const {
     id: idProp,
-    todo: todoModelProp,
+    user: userModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -24,48 +24,46 @@ export default function TodoUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    name: "",
-    description: "",
-    image: "",
-    createdAt: "",
-    updatedAt: "",
+    first_name: "",
+    last_name: "",
+    role: "",
+    email: "",
+    password: "",
   };
-  const [name, setName] = React.useState(initialValues.name);
-  const [description, setDescription] = React.useState(
-    initialValues.description
-  );
-  const [image, setImage] = React.useState(initialValues.image);
-  const [createdAt, setCreatedAt] = React.useState(initialValues.createdAt);
-  const [updatedAt, setUpdatedAt] = React.useState(initialValues.updatedAt);
+  const [first_name, setFirst_name] = React.useState(initialValues.first_name);
+  const [last_name, setLast_name] = React.useState(initialValues.last_name);
+  const [role, setRole] = React.useState(initialValues.role);
+  const [email, setEmail] = React.useState(initialValues.email);
+  const [password, setPassword] = React.useState(initialValues.password);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = todoRecord
-      ? { ...initialValues, ...todoRecord }
+    const cleanValues = userRecord
+      ? { ...initialValues, ...userRecord }
       : initialValues;
-    setName(cleanValues.name);
-    setDescription(cleanValues.description);
-    setImage(cleanValues.image);
-    setCreatedAt(cleanValues.createdAt);
-    setUpdatedAt(cleanValues.updatedAt);
+    setFirst_name(cleanValues.first_name);
+    setLast_name(cleanValues.last_name);
+    setRole(cleanValues.role);
+    setEmail(cleanValues.email);
+    setPassword(cleanValues.password);
     setErrors({});
   };
-  const [todoRecord, setTodoRecord] = React.useState(todoModelProp);
+  const [userRecord, setUserRecord] = React.useState(userModelProp);
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
-        ? await DataStore.query(Todo, idProp)
-        : todoModelProp;
-      setTodoRecord(record);
+        ? await DataStore.query(User, idProp)
+        : userModelProp;
+      setUserRecord(record);
     };
     queryData();
-  }, [idProp, todoModelProp]);
-  React.useEffect(resetStateValues, [todoRecord]);
+  }, [idProp, userModelProp]);
+  React.useEffect(resetStateValues, [userRecord]);
   const validations = {
-    name: [{ type: "Required" }],
-    description: [],
-    image: [],
-    createdAt: [],
-    updatedAt: [],
+    first_name: [{ type: "Required" }],
+    last_name: [],
+    role: [],
+    email: [{ type: "Required" }],
+    password: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -84,23 +82,6 @@ export default function TodoUpdateForm(props) {
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
   };
-  const convertToLocal = (date) => {
-    const df = new Intl.DateTimeFormat("default", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      calendar: "iso8601",
-      numberingSystem: "latn",
-      hourCycle: "h23",
-    });
-    const parts = df.formatToParts(date).reduce((acc, part) => {
-      acc[part.type] = part.value;
-      return acc;
-    }, {});
-    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
-  };
   return (
     <Grid
       as="form"
@@ -110,11 +91,11 @@ export default function TodoUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          name,
-          description,
-          image,
-          createdAt,
-          updatedAt,
+          first_name,
+          last_name,
+          role,
+          email,
+          password,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -145,7 +126,7 @@ export default function TodoUpdateForm(props) {
             }
           });
           await DataStore.save(
-            Todo.copyOf(todoRecord, (updated) => {
+            User.copyOf(userRecord, (updated) => {
               Object.assign(updated, modelFields);
             })
           );
@@ -158,152 +139,148 @@ export default function TodoUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "TodoUpdateForm")}
+      {...getOverrideProps(overrides, "UserUpdateForm")}
       {...rest}
     >
       <TextField
-        label="Name"
+        label="First name"
         isRequired={true}
         isReadOnly={false}
-        value={name}
+        value={first_name}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              name: value,
-              description,
-              image,
-              createdAt,
-              updatedAt,
+              first_name: value,
+              last_name,
+              role,
+              email,
+              password,
             };
             const result = onChange(modelFields);
-            value = result?.name ?? value;
+            value = result?.first_name ?? value;
           }
-          if (errors.name?.hasError) {
-            runValidationTasks("name", value);
+          if (errors.first_name?.hasError) {
+            runValidationTasks("first_name", value);
           }
-          setName(value);
+          setFirst_name(value);
         }}
-        onBlur={() => runValidationTasks("name", name)}
-        errorMessage={errors.name?.errorMessage}
-        hasError={errors.name?.hasError}
-        {...getOverrideProps(overrides, "name")}
+        onBlur={() => runValidationTasks("first_name", first_name)}
+        errorMessage={errors.first_name?.errorMessage}
+        hasError={errors.first_name?.hasError}
+        {...getOverrideProps(overrides, "first_name")}
       ></TextField>
       <TextField
-        label="Description"
+        label="Last name"
         isRequired={false}
         isReadOnly={false}
-        value={description}
+        value={last_name}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              name,
-              description: value,
-              image,
-              createdAt,
-              updatedAt,
+              first_name,
+              last_name: value,
+              role,
+              email,
+              password,
             };
             const result = onChange(modelFields);
-            value = result?.description ?? value;
+            value = result?.last_name ?? value;
           }
-          if (errors.description?.hasError) {
-            runValidationTasks("description", value);
+          if (errors.last_name?.hasError) {
+            runValidationTasks("last_name", value);
           }
-          setDescription(value);
+          setLast_name(value);
         }}
-        onBlur={() => runValidationTasks("description", description)}
-        errorMessage={errors.description?.errorMessage}
-        hasError={errors.description?.hasError}
-        {...getOverrideProps(overrides, "description")}
+        onBlur={() => runValidationTasks("last_name", last_name)}
+        errorMessage={errors.last_name?.errorMessage}
+        hasError={errors.last_name?.hasError}
+        {...getOverrideProps(overrides, "last_name")}
       ></TextField>
       <TextField
-        label="Image"
+        label="Role"
         isRequired={false}
         isReadOnly={false}
-        value={image}
+        value={role}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              name,
-              description,
-              image: value,
-              createdAt,
-              updatedAt,
+              first_name,
+              last_name,
+              role: value,
+              email,
+              password,
             };
             const result = onChange(modelFields);
-            value = result?.image ?? value;
+            value = result?.role ?? value;
           }
-          if (errors.image?.hasError) {
-            runValidationTasks("image", value);
+          if (errors.role?.hasError) {
+            runValidationTasks("role", value);
           }
-          setImage(value);
+          setRole(value);
         }}
-        onBlur={() => runValidationTasks("image", image)}
-        errorMessage={errors.image?.errorMessage}
-        hasError={errors.image?.hasError}
-        {...getOverrideProps(overrides, "image")}
+        onBlur={() => runValidationTasks("role", role)}
+        errorMessage={errors.role?.errorMessage}
+        hasError={errors.role?.hasError}
+        {...getOverrideProps(overrides, "role")}
       ></TextField>
       <TextField
-        label="Created at"
-        isRequired={false}
+        label="Email"
+        isRequired={true}
         isReadOnly={false}
-        type="datetime-local"
-        value={createdAt && convertToLocal(new Date(createdAt))}
+        value={email}
         onChange={(e) => {
-          let value =
-            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              name,
-              description,
-              image,
-              createdAt: value,
-              updatedAt,
+              first_name,
+              last_name,
+              role,
+              email: value,
+              password,
             };
             const result = onChange(modelFields);
-            value = result?.createdAt ?? value;
+            value = result?.email ?? value;
           }
-          if (errors.createdAt?.hasError) {
-            runValidationTasks("createdAt", value);
+          if (errors.email?.hasError) {
+            runValidationTasks("email", value);
           }
-          setCreatedAt(value);
+          setEmail(value);
         }}
-        onBlur={() => runValidationTasks("createdAt", createdAt)}
-        errorMessage={errors.createdAt?.errorMessage}
-        hasError={errors.createdAt?.hasError}
-        {...getOverrideProps(overrides, "createdAt")}
+        onBlur={() => runValidationTasks("email", email)}
+        errorMessage={errors.email?.errorMessage}
+        hasError={errors.email?.hasError}
+        {...getOverrideProps(overrides, "email")}
       ></TextField>
       <TextField
-        label="Updated at"
-        isRequired={false}
+        label="Password"
+        isRequired={true}
         isReadOnly={false}
-        type="datetime-local"
-        value={updatedAt && convertToLocal(new Date(updatedAt))}
+        value={password}
         onChange={(e) => {
-          let value =
-            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              name,
-              description,
-              image,
-              createdAt,
-              updatedAt: value,
+              first_name,
+              last_name,
+              role,
+              email,
+              password: value,
             };
             const result = onChange(modelFields);
-            value = result?.updatedAt ?? value;
+            value = result?.password ?? value;
           }
-          if (errors.updatedAt?.hasError) {
-            runValidationTasks("updatedAt", value);
+          if (errors.password?.hasError) {
+            runValidationTasks("password", value);
           }
-          setUpdatedAt(value);
+          setPassword(value);
         }}
-        onBlur={() => runValidationTasks("updatedAt", updatedAt)}
-        errorMessage={errors.updatedAt?.errorMessage}
-        hasError={errors.updatedAt?.hasError}
-        {...getOverrideProps(overrides, "updatedAt")}
+        onBlur={() => runValidationTasks("password", password)}
+        errorMessage={errors.password?.errorMessage}
+        hasError={errors.password?.hasError}
+        {...getOverrideProps(overrides, "password")}
       ></TextField>
       <Flex
         justifyContent="space-between"
@@ -316,7 +293,7 @@ export default function TodoUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || todoModelProp)}
+          isDisabled={!(idProp || userModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -328,7 +305,7 @@ export default function TodoUpdateForm(props) {
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || todoModelProp) ||
+              !(idProp || userModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}
