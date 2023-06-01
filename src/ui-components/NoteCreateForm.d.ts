@@ -12,31 +12,31 @@ export declare type ValidationResponse = {
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type TodoCreateFormInputValues = {
+export declare type NoteCreateFormInputValues = {
     name?: string;
     description?: string;
     image?: string;
 };
-export declare type TodoCreateFormValidationValues = {
+export declare type NoteCreateFormValidationValues = {
     name?: ValidationFunction<string>;
     description?: ValidationFunction<string>;
     image?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type TodoCreateFormOverridesProps = {
-    TodoCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
+export declare type NoteCreateFormOverridesProps = {
+    NoteCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     description?: PrimitiveOverrideProps<TextFieldProps>;
     image?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type TodoCreateFormProps = React.PropsWithChildren<{
-    overrides?: TodoCreateFormOverridesProps | undefined | null;
+export declare type NoteCreateFormProps = React.PropsWithChildren<{
+    overrides?: NoteCreateFormOverridesProps | undefined | null;
 } & {
     clearOnSuccess?: boolean;
-    onSubmit?: (fields: TodoCreateFormInputValues) => TodoCreateFormInputValues;
-    onSuccess?: (fields: TodoCreateFormInputValues) => void;
-    onError?: (fields: TodoCreateFormInputValues, errorMessage: string) => void;
-    onChange?: (fields: TodoCreateFormInputValues) => TodoCreateFormInputValues;
-    onValidate?: TodoCreateFormValidationValues;
+    onSubmit?: (fields: NoteCreateFormInputValues) => NoteCreateFormInputValues;
+    onSuccess?: (fields: NoteCreateFormInputValues) => void;
+    onError?: (fields: NoteCreateFormInputValues, errorMessage: string) => void;
+    onChange?: (fields: NoteCreateFormInputValues) => NoteCreateFormInputValues;
+    onValidate?: NoteCreateFormValidationValues;
 } & React.CSSProperties>;
-export default function TodoCreateForm(props: TodoCreateFormProps): React.ReactElement;
+export default function NoteCreateForm(props: NoteCreateFormProps): React.ReactElement;

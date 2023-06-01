@@ -1,5 +1,6 @@
 {
   "AppSyncApiName": "reactamplifytodo",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthModeLastUpdated": "2023-05-31T12:03:39.560Z"
 }

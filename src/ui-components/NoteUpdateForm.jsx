@@ -8,12 +8,13 @@
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
-import { Todo } from "../models";
+import { Note } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
-export default function TodoCreateForm(props) {
+export default function NoteUpdateForm(props) {
   const {
-    clearOnSuccess = true,
+    id: idProp,
+    note: noteModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -34,13 +35,27 @@ export default function TodoCreateForm(props) {
   const [image, setImage] = React.useState(initialValues.image);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    setName(initialValues.name);
-    setDescription(initialValues.description);
-    setImage(initialValues.image);
+    const cleanValues = noteRecord
+      ? { ...initialValues, ...noteRecord }
+      : initialValues;
+    setName(cleanValues.name);
+    setDescription(cleanValues.description);
+    setImage(cleanValues.image);
     setErrors({});
   };
+  const [noteRecord, setNoteRecord] = React.useState(noteModelProp);
+  React.useEffect(() => {
+    const queryData = async () => {
+      const record = idProp
+        ? await DataStore.query(Note, idProp)
+        : noteModelProp;
+      setNoteRecord(record);
+    };
+    queryData();
+  }, [idProp, noteModelProp]);
+  React.useEffect(resetStateValues, [noteRecord]);
   const validations = {
-    name: [{ type: "Required" }],
+    name: [],
     description: [],
     image: [],
   };
@@ -102,12 +117,13 @@ export default function TodoCreateForm(props) {
               modelFields[key] = undefined;
             }
           });
-          await DataStore.save(new Todo(modelFields));
+          await DataStore.save(
+            Note.copyOf(noteRecord, (updated) => {
+              Object.assign(updated, modelFields);
+            })
+          );
           if (onSuccess) {
             onSuccess(modelFields);
-          }
-          if (clearOnSuccess) {
-            resetStateValues();
           }
         } catch (err) {
           if (onError) {
@@ -115,12 +131,12 @@ export default function TodoCreateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "TodoCreateForm")}
+      {...getOverrideProps(overrides, "NoteUpdateForm")}
       {...rest}
     >
       <TextField
         label="Name"
-        isRequired={true}
+        isRequired={false}
         isReadOnly={false}
         value={name}
         onChange={(e) => {
@@ -201,13 +217,14 @@ export default function TodoCreateForm(props) {
         {...getOverrideProps(overrides, "CTAFlex")}
       >
         <Button
-          children="Clear"
+          children="Reset"
           type="reset"
           onClick={(event) => {
             event.preventDefault();
             resetStateValues();
           }}
-          {...getOverrideProps(overrides, "ClearButton")}
+          isDisabled={!(idProp || noteModelProp)}
+          {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
           gap="15px"
@@ -217,7 +234,10 @@ export default function TodoCreateForm(props) {
             children="Submit"
             type="submit"
             variation="primary"
-            isDisabled={Object.values(errors).some((e) => e?.hasError)}
+            isDisabled={
+              !(idProp || noteModelProp) ||
+              Object.values(errors).some((e) => e?.hasError)
+            }
             {...getOverrideProps(overrides, "SubmitButton")}
           ></Button>
         </Flex>

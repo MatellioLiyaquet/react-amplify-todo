@@ -1,0 +1,18 @@
+{
+  "resourceName": "reactamplifytodo",
+  "policyUUID": "76657ddd",
+  "bucketName": "reactamplifytodo1c12ed07fbc84b5483e48fda06c7598",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "S3Trigger694fc4b2",
+  "groupAccess": {}
+}

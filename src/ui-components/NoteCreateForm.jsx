@@ -8,10 +8,10 @@
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
-import { Todo } from "../models";
+import { Note } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
-export default function TodoCreateForm(props) {
+export default function NoteCreateForm(props) {
   const {
     clearOnSuccess = true,
     onSuccess,
@@ -40,7 +40,7 @@ export default function TodoCreateForm(props) {
     setErrors({});
   };
   const validations = {
-    name: [{ type: "Required" }],
+    name: [],
     description: [],
     image: [],
   };
@@ -102,7 +102,7 @@ export default function TodoCreateForm(props) {
               modelFields[key] = undefined;
             }
           });
-          await DataStore.save(new Todo(modelFields));
+          await DataStore.save(new Note(modelFields));
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -115,12 +115,12 @@ export default function TodoCreateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "TodoCreateForm")}
+      {...getOverrideProps(overrides, "NoteCreateForm")}
       {...rest}
     >
       <TextField
         label="Name"
-        isRequired={true}
+        isRequired={false}
         isReadOnly={false}
         value={name}
         onChange={(e) => {
