@@ -26,29 +26,21 @@ export default function UserCreateForm(props) {
     first_name: "",
     last_name: "",
     role: "",
-    email: "",
-    password: "",
   };
   const [first_name, setFirst_name] = React.useState(initialValues.first_name);
   const [last_name, setLast_name] = React.useState(initialValues.last_name);
   const [role, setRole] = React.useState(initialValues.role);
-  const [email, setEmail] = React.useState(initialValues.email);
-  const [password, setPassword] = React.useState(initialValues.password);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setFirst_name(initialValues.first_name);
     setLast_name(initialValues.last_name);
     setRole(initialValues.role);
-    setEmail(initialValues.email);
-    setPassword(initialValues.password);
     setErrors({});
   };
   const validations = {
     first_name: [{ type: "Required" }],
     last_name: [],
     role: [],
-    email: [{ type: "Required" }],
-    password: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -79,8 +71,6 @@ export default function UserCreateForm(props) {
           first_name,
           last_name,
           role,
-          email,
-          password,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -138,8 +128,6 @@ export default function UserCreateForm(props) {
               first_name: value,
               last_name,
               role,
-              email,
-              password,
             };
             const result = onChange(modelFields);
             value = result?.first_name ?? value;
@@ -166,8 +154,6 @@ export default function UserCreateForm(props) {
               first_name,
               last_name: value,
               role,
-              email,
-              password,
             };
             const result = onChange(modelFields);
             value = result?.last_name ?? value;
@@ -194,8 +180,6 @@ export default function UserCreateForm(props) {
               first_name,
               last_name,
               role: value,
-              email,
-              password,
             };
             const result = onChange(modelFields);
             value = result?.role ?? value;
@@ -209,62 +193,6 @@ export default function UserCreateForm(props) {
         errorMessage={errors.role?.errorMessage}
         hasError={errors.role?.hasError}
         {...getOverrideProps(overrides, "role")}
-      ></TextField>
-      <TextField
-        label="Email"
-        isRequired={true}
-        isReadOnly={false}
-        value={email}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              first_name,
-              last_name,
-              role,
-              email: value,
-              password,
-            };
-            const result = onChange(modelFields);
-            value = result?.email ?? value;
-          }
-          if (errors.email?.hasError) {
-            runValidationTasks("email", value);
-          }
-          setEmail(value);
-        }}
-        onBlur={() => runValidationTasks("email", email)}
-        errorMessage={errors.email?.errorMessage}
-        hasError={errors.email?.hasError}
-        {...getOverrideProps(overrides, "email")}
-      ></TextField>
-      <TextField
-        label="Password"
-        isRequired={true}
-        isReadOnly={false}
-        value={password}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              first_name,
-              last_name,
-              role,
-              email,
-              password: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.password ?? value;
-          }
-          if (errors.password?.hasError) {
-            runValidationTasks("password", value);
-          }
-          setPassword(value);
-        }}
-        onBlur={() => runValidationTasks("password", password)}
-        errorMessage={errors.password?.errorMessage}
-        hasError={errors.password?.hasError}
-        {...getOverrideProps(overrides, "password")}
       ></TextField>
       <Flex
         justifyContent="space-between"

@@ -17,7 +17,6 @@ import {
   createTodo as createToDoMutation,
   deleteTodo as deleteToDoMutation,
 } from "./graphql/mutations";
-import UserCreateForm from "./ui-components/UserCreateForm";
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([]);
