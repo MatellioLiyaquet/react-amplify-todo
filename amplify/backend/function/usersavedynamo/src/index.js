@@ -23,10 +23,8 @@ exports.handler = async (event, context) => {
             Item: {
                 'id': {S: event.request.userAttributes.sub},
                 '__typename': {S: 'Users'},
-                'name': {S: event.request.userAttributes.name},
+                'name': 'Test Name',
                 'email': {S: event.request.userAttributes.email},
-                'createdAt': {S: date.toISOString()},
-                'updatedAt': {S: date.toISOString()},
             },
             TableName: process.env.API_REACTAMPLIFYTODO_USERSTABLE_NAME
         };
