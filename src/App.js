@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
-import { API, Storage } from "aws-amplify";
+import { API, Auth, Storage } from "aws-amplify";
 import {
   Button,
   Flex,
@@ -20,13 +20,55 @@ import {
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([]);
+  const [userId, setUserId] = useState("");
+  const [userInfo, setUserInfo] = useState({ attributes: {} });
+  const getUserId = async () => {
+    try {
+      const currentUser = await Auth.currentAuthenticatedUser();
+      setUserInfo(currentUser);
+      return currentUser.attributes.sub;
+    } catch (error) {
+      console.log("Error retrieving user ID:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
-    fetchNotes();
+    const fetchUserId = async () => {
+      const userId = await getUserId();
+      setUserId(userId);
+    };
+
+    fetchUserId();
   }, []);
 
+  useEffect(() => {
+    if (userId != "") {
+      fetchNotes();
+    }
+  }, [userId]);
+
   async function fetchNotes() {
-    const apiData = await API.graphql({ query: listTodos });
+    let apiData;
+    if (isAdmin()) {
+      apiData = await API.graphql({
+        query: listTodos,
+        variables: {
+          filter: {
+            usersID: {
+              eq: userId,
+            },
+          },
+        },
+      });
+    }
+
+    if (isSuperAdmin()) {
+      apiData = await API.graphql({
+        query: listTodos,
+      });
+    }
+
     const notesFromAPI = apiData.data.listTodos.items;
     await Promise.all(
       notesFromAPI.map(async (note) => {
@@ -48,6 +90,7 @@ const App = ({ signOut }) => {
       name: form.get("name"),
       description: form.get("description"),
       image: image.name,
+      usersID: userId,
     };
     if (!!data.image) await Storage.put(data.name, image);
     await API.graphql({
@@ -57,6 +100,18 @@ const App = ({ signOut }) => {
     fetchNotes();
     event.target.reset();
   }
+
+  const isSuperAdmin = () => {
+    return userInfo.signInUserSession?.accessToken?.payload?.[
+      "cognito:groups"
+    ].includes("Super_admin");
+  };
+
+  const isAdmin = () => {
+    return userInfo.signInUserSession?.accessToken?.payload?.[
+      "cognito:groups"
+    ].includes("Admin");
+  };
 
   async function deleteNote({ id, name }) {
     const newNotes = notes.filter((note) => note.id !== id);
@@ -69,66 +124,76 @@ const App = ({ signOut }) => {
   }
 
   return (
-    <View className="App">
-      <Heading level={1}>My Notes App</Heading>
-      <View as="form" margin="3rem 0" onSubmit={createNote}>
-        <Flex direction="row" justifyContent="center">
-          <TextField
-            name="name"
-            placeholder="Note Name"
-            label="Note Name"
-            labelHidden
-            variation="quiet"
-            required
-          />
-          <TextField
-            name="description"
-            placeholder="Note Description"
-            label="Note Description"
-            labelHidden
-            variation="quiet"
-            required
-          />
-          <View
-            name="image"
-            as="input"
-            type="file"
-            style={{ alignSelf: "end" }}
-          />
-          <Button type="submit" variation="primary">
-            Create Note
-          </Button>
-        </Flex>
-      </View>
-      <Heading level={2}>Current Notes</Heading>
-      <View margin="3rem 0">
-        {notes.map((note) => (
-          <Flex
-            key={note.id || note.name}
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Text as="strong" fontWeight={700}>
-              {note.name}
-            </Text>
-            <Text as="span">{note.description}</Text>
-            {note.image && (
-              <Image
-                src={note.image}
-                alt={`visual aid for ${notes.name}`}
-                style={{ width: 400 }}
-              />
+    <>
+      <View className="App">
+        <Heading level={1}>My Todo App({userInfo.attributes.email})</Heading>
+        <View as="form" margin="3rem 0" onSubmit={createNote}>
+          <Flex direction="row" justifyContent="center">
+            <TextField
+              name="name"
+              placeholder="Todo"
+              label="Todo"
+              labelHidden
+              variation="quiet"
+              required
+            />
+            <TextField
+              name="description"
+              placeholder="Todo Description"
+              label="Todo Description"
+              labelHidden
+              variation="quiet"
+              required
+            />
+            <View
+              name="image"
+              as="input"
+              type="file"
+              style={{ alignSelf: "end" }}
+            />
+            {isSuperAdmin() || isAdmin() ? (
+              <Button type="submit" variation="primary">
+                Create Todo
+              </Button>
+            ) : (
+              ""
             )}
-            <Button variation="link" onClick={() => deleteNote(note)}>
-              Delete note
-            </Button>
           </Flex>
-        ))}
+        </View>
+        <Heading level={2}>Current Todos</Heading>
+        <View margin="3rem 0">
+          {notes.map((note) => (
+            <Flex
+              key={note.id || note.name}
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Text as="strong" fontWeight={700}>
+                {note.name}
+              </Text>
+              <Text as="span">{note.description}</Text>
+              {note.image && (
+                <Image
+                  src={note.image}
+                  alt={`visual aid for ${notes.name}`}
+                  style={{ width: 400 }}
+                />
+              )}
+              {isSuperAdmin() ? (
+                <Button variation="link" onClick={() => deleteNote(note)}>
+                  Delete {note.usersID === userId ? "my" : ""} todo
+                </Button>
+              ) : (
+                ""
+              )}
+            </Flex>
+          ))}
+        </View>
+        <Button onClick={signOut}>Sign Out</Button>
+        {/* <UserCreateForm key={'123'} /> */}
       </View>
-      <Button onClick={signOut}>Sign Out</Button>
-      {/* <UserCreateForm key={'123'} /> */}
-    </View>
+    </>
   );
 };
 

@@ -58,6 +58,7 @@ export const listTodos = /* GraphQL */ `
         image
         createdAt
         updatedAt
+        usersID
       }
       nextToken
     }

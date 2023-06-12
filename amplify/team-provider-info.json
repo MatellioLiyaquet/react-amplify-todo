@@ -25,7 +25,7 @@
         },
         "usersavedynamo": {
           "deploymentBucketName": "amplify-amplify3f48618169164-staging-104604-deployment",
-          "s3Key": "amplify-builds/usersavedynamo-5358342b526f72316943-build.zip"
+          "s3Key": "amplify-builds/usersavedynamo-344a72634d6172617171-build.zip"
         }
       },
       "storage": {
