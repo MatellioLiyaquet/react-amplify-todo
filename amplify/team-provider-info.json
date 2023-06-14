@@ -13,7 +13,8 @@
     },
     "categories": {
       "auth": {
-        "reactamplifytodo03c4f312": {}
+        "reactamplifytodo03c4f312": {},
+        "userPoolGroups": {}
       },
       "api": {
         "reactamplifytodo": {}

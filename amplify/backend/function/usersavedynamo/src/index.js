@@ -38,6 +38,14 @@ exports.handler = async (event, context) => {
       console.log("Error", err);
     }
 
+    const { userPoolId, userName } = event;
+
+    await adminAddUserToGroup({
+      userPoolId,
+      username: userName,
+      groupName: "Admin",
+    });
+
     console.log("Success: Everything executed correctly");
     context.done(null, event);
   } else {
@@ -46,3 +54,14 @@ exports.handler = async (event, context) => {
     context.done(null, event);
   }
 };
+
+export function adminAddUserToGroup({ userPoolId, username, groupName }) {
+  const params = {
+    GroupName: groupName,
+    UserPoolId: userPoolId,
+    Username: username,
+  };
+
+  const cognitoIdp = new aws.CognitoIdentityServiceProvider();
+  return cognitoIdp.adminAddUserToGroup(params).promise();
+}
