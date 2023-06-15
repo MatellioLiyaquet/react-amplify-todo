@@ -8,7 +8,7 @@ import App from "./App";
 const Authentication = ({ signOut }) => {
   const { tokens } = useTheme();
   const theme = {
-    name: "Auth Example Theme",
+    name: "Auth Theme",
     tokens: {
       colors: {
         background: {

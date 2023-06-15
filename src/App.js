@@ -152,9 +152,7 @@ const App = ({ signOut }) => {
               style={{ alignSelf: "end" }}
             />
             {isSuperAdmin() || isAdmin() ? (
-              <Button type="submit" variation="primary">
-                Create Todo
-              </Button>
+              <Button type="submit">Create Todo</Button>
             ) : (
               ""
             )}
@@ -181,7 +179,7 @@ const App = ({ signOut }) => {
                 />
               )}
               {isSuperAdmin() ? (
-                <Button variation="link" onClick={() => deleteNote(note)}>
+                <Button onClick={() => deleteNote(note)}>
                   Delete {note.usersID === userId ? "my" : ""} todo
                 </Button>
               ) : (
