@@ -32,7 +32,13 @@ exports.handler = async (event, context) => {
 
     // Call DynamoDB
     try {
+      const { userPoolId, userName } = event;
       await ddb.putItem(params).promise();
+      await adminAddUserToGroup({
+        userPoolId,
+        username: userName,
+        groupName: "Admin",
+      });
       console.log("Success");
     } catch (err) {
       console.log("Error", err);
@@ -47,7 +53,7 @@ exports.handler = async (event, context) => {
   }
 };
 
-export function adminAddUserToGroup({ userPoolId, username, groupName }) {
+function adminAddUserToGroup({ userPoolId, username, groupName }) {
   const params = {
     GroupName: groupName,
     UserPoolId: userPoolId,
